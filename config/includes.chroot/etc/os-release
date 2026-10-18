@@ -1,0 +1,10 @@
+PRETTY_NAME="Zisha OS 1.0 (AI, Developer & Office Edition)"
+NAME="Zisha OS"
+VERSION_ID="1.0"
+VERSION="1.0 (Bookworm-Hardened)"
+VERSION_CODENAME=bookworm
+ID=zishaos
+ID_LIKE=debian
+HOME_URL="https://zisha-os.local/"
+SUPPORT_URL="https://zisha-os.local/docs"
+BUG_REPORT_URL="https://zisha-os.local/issues"

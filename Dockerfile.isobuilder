@@ -1,0 +1,39 @@
+# ==============================================================================
+# Zisha OS 1.0 — Automated ISO Builder Container (Debian 12 Bookworm Base)
+# ==============================================================================
+FROM debian:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Dhaka
+
+# Install Debian Live-Build and ISO generation tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    live-build \
+    debootstrap \
+    squashfs-tools \
+    xorriso \
+    isolinux \
+    syslinux-common \
+    syslinux-efi \
+    grub-pc-bin \
+    grub-efi-amd64-bin \
+    grub-efi-ia32-bin \
+    mtools \
+    dosfstools \
+    parted \
+    gdisk \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    gnupg \
+    apt-transport-https \
+    sudo \
+    cpio \
+    rsync \
+    file \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/bin/bash", "/workspace/scripts/build-iso.sh"]

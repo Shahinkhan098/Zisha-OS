@@ -1,0 +1,37 @@
+name: Build Zisha OS 1.0 Bootable ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+
+jobs:
+  build-iso:
+    name: Assemble Zisha OS 1.0 (amd64 .ISO)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Zisha OS Repository
+        uses: actions/checkout@v4
+
+      - name: Free Disk Space on Cloud Runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+
+      - name: Build Zisha OS ISO Builder Docker Image
+        run: |
+          docker build -t zisha-os-builder:1.0 -f Dockerfile.isobuilder .
+
+      - name: Generate zisha-os-1.0-amd64.iso
+        run: |
+          mkdir -p output
+          docker run --rm --privileged -v "$PWD:/workspace" zisha-os-builder:1.0
+
+      - name: Upload Zisha OS 1.0 Bootable ISO Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zisha-os-1.0-amd64-iso
+          path: |
+            output/zisha-os-1.0-amd64.iso
+            output/zisha-os-1.0-amd64.iso.sha256
+          retention-days: 30

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zisha OS — বাংলা ও ইংরেজি অফিস সহায়িকা (ইউনিকোড ⇄ বিজয় কনভার্টার)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --secondary: #3b82f6;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'SolaimanLipi', 'Nikosh', 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #064e3b, #1e293b);
+      padding: 18px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .brand h1 {
+      font-size: 1.5rem;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .badge {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      background: var(--card);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      align-items: center;
+    }
+    button, select {
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #052e16;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover { background: var(--primary-hover); color: #fff; }
+    .btn-secondary {
+      background: var(--secondary);
+      color: #fff;
+      border-color: var(--secondary);
+    }
+    .btn-secondary:hover { opacity: 0.9; }
+    .btn-outline {
+      background: #0f172a;
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--primary); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    textarea {
+      width: 100%;
+      min-height: 340px;
+      background: #090d16;
+      color: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 1.08rem;
+      line-height: 1.75;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    #unicodeBox {
+      font-family: 'Nikosh', 'SolaimanLipi', 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+    }
+    #bijoyBox {
+      font-family: 'SutonnyMJ', 'Nikosh', monospace;
+    }
+    .stats {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .shortcuts-card {
+      margin-top: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .shortcuts-card h3 {
+      color: #34d399;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+    .shortcut-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+    kbd {
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-size: 0.82rem;
+      color: #38bdf8;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #10b981;
+      color: #052e16;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>⚡ Zisha OS — বাংলা ও ইংরেজি অফিস সহায়িকা</h1>
+        <p>১০০% অফলাইন ইউনিকোড (অভ্র/নিকষ) ⇄ বিজয় (SutonnyMJ) কনভার্টার এবং দাপ্তরিক ড্রাফট প্যাড</p>
+      </div>
+      <span class="badge">Offline Secure Mode • Zisha OS 1.0</span>
+    </header>
+
+    <div class="toolbar">
+      <button class="btn-primary" onclick="convertUnicodeToBijoy()">ইউনিকোড ➔ বিজয় (ANSI) ▼</button>
+      <button class="btn-secondary" onclick="convertBijoyToUnicode()">▲ বিজয় (ANSI) ➔ ইউনিকোড</button>
+
+      <select class="btn-outline" id="templateSelect" onchange="loadOfficialTemplate(this.value)">
+        <option value="">📄 অফিসিয়াল ড্রাফট টেমপ্লেট বেছে নিন...</option>
+        <option value="bn_notice">বাংলা: অফিস আদেশ / বিজ্ঞপ্তি (Official Notice)</option>
+        <option value="bn_app">বাংলা: দাপ্তরিক আবেদনপত্র (Official Application)</option>
+        <option value="en_memo">English: Official Memorandum / Business Email</option>
+        <option value="ai_spec">AI / Software: প্রজেক্ট স্পেসিফিকেশন নোট</option>
+      </select>
+
+      <button class="btn-outline" onclick="downloadText('unicodeBox', 'zisha-unicode-doc.txt')">💾 ইউনিকোড সেভ (.txt)</button>
+      <button class="btn-outline" onclick="window.print()">🖨️ প্রিন্ট / PDF</button>
+      <button class="btn-outline" onclick="clearAll()">🗑️ মুছে ফেলুন</button>
+    </div>
+
+    <div class="grid">
+      <!-- Unicode Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>ইউনিকোড বক্স (Avro / Nikosh / SolaimanLipi / English)</span>
+          <button class="btn-outline" onclick="copyBox('unicodeBox')">📋 কপি করুন</button>
+        </div>
+        <textarea id="unicodeBox" placeholder="এখানে অভ্র বা ইউনিকোড বাংলায় অথবা ইংরেজিতে লিখুন বা পেস্ট করুন..." oninput="updateStats()"></textarea>
+        <div class="stats">
+          <span id="unicodeWords">শব্দ: ০</span>
+          <span id="unicodeChars">অক্ষর: ০</span>
+        </div>
+      </div>
+
+      <!-- Bijoy ANSI Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>বিজয় (ANSI / SutonnyMJ) বক্স</span>
+          <button class="btn-outline" onclick="copyBox('bijoyBox')">📋 কপি করুন</button>
+        </div>
+        <textarea id="bijoyBox" placeholder="বিজয় (SutonnyMJ) ফন্টের লেখা এখানে পেস্ট করে 'বিজয় ➔ ইউনিকোড' বাটনে ক্লিক করুন..." oninput="updateStats()"></textarea>
+        <div class="stats">
+          <span id="bijoyWords">শব্দ: ০</span>
+          <span id="bijoyChars">অক্ষর: ০</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="shortcuts-card">
+      <h3>⌨️ Zisha OS বাংলা ও ইংরেজি টাইপিং গাইড</h3>
+      <div class="shortcut-list">
+        <div><kbd>Super + Space</kbd> অথবা <kbd>Ctrl + Space</kbd> : <strong>English ⇄ অভ্র ⇄ বিজয়</strong> কিবোর্ড পরিবর্তন</div>
+        <div><strong>অফিস সফটওয়্যার:</strong> মেনু থেকে <strong>OnlyOffice</strong> বা <strong>LibreOffice Writer</strong> ওপেন করুন</div>
+        <div><strong>বাংলা OCR:</strong> ছবি/স্ক্যান করা PDF থেকে বাংলা টেক্সট নিতে <strong>gImageReader</strong> ব্যবহার করুন</div>
+        <div><strong>অফিসিয়াল ফন্ট:</strong> ইউনিকোডে <code>Nikosh</code> / <code>Hind Siliguri</code> এবং ইংরেজিতে <code>Times New Roman</code> / <code>Calibri</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastMsg">কপি করা হয়েছে!</div>
+
+  <script>
+    // Core Unicode <-> Bijoy (ANSI) Mapping Table for Common Characters, Kars & Conjuncts
+    const uniToBijoyMap = [
+      ["ক্ষ", "¶"], ["জ্ঞ", "Á"], ["ঙ্ক", "¼"], ["ঙ্গ", "½"],
+      ["ক্ত", "³"], ["ক্ক", "°"], ["ক্ট", "±"], ["ক্র", "µ"], ["ক্ল", "¬"],
+      ["ন্ত", "šÍ"], ["ন্দ", "›`"], ["ন্ধ", "Ü"], ["ন্ন", "bœ"], ["ন্ব", "š^"],
+      ["ম্প", "¤ú"], ["ম্ফ", "¤¢"], ["ম্ব", "¤^"], ["ম্ভ", "¤§"], ["ম্ম", "¤§"],
+      ["স্ত", "¯Í"], ["স্থ", "¯’"], ["স্প", "¯ú"], ["স্ফ", "¯¢"], ["স্র", "¯্র"],
+      ["ষ্ট", "ó"], ["ষ্ঠ", "ô"], ["ষ্ণ", "ò"], ["শ্চ", "ð"], ["শ্ন", "kœ"],
+      ["ত্ত", "Ë"], ["ত্থ", "Ì"], ["ত্র", "Î"], ["দ্দ", "Ï"], ["দ্ধ", "×"], ["দ্ব", "Ø"],
+      ["প্ত", "ß"], ["প্ন", "cœ"], ["প্প", "à"], ["প্র", "cÖ"], ["প্ল", "cø"],
+      ["ব্দ", "ã"], ["ব্ধ", "ä"], ["ব্ব", "eŸ"], ["ব্র", "eÖ"], ["ব্ল", "eø"],
+      ["ল্ক", "é"], ["ল্গ", "ê"], ["ল্প", "í"], ["ল্ফ", "î"], ["ল্ব", "j¦"], ["ল্ল", "jø"],
+      ["হ্ম", "þ"], ["হ্ন", "ý"], ["হ্র", "nª"], ["হ্ল", "n¬"],
+      ["্র", "Ö"], ["্য", "¨"], ["্", "&"],
+      ["অ", "A"], ["আ", "Av"], ["ই", "B"], ["ঈ", "C"], ["উ", "D"], ["ঊ", "E"],
+      ["ঋ", "F"], ["এ", "G"], ["ঐ", "H"], ["ও", "I"], ["ঔ", "J"],
+      ["ক", "K"], ["খ", "L"], ["গ", "M"], ["ঘ", "N"], ["ঙ", "O"],
+      ["চ", "P"], ["ছ", "Q"], ["জ", "R"], ["ঝ", "S"], ["ঞ", "T"],
+      ["ট", "U"], ["ঠ", "V"], ["ড", "W"], ["ঢ", "X"], ["ণ", "Y"],
+      ["ত", "Z"], ["থ", "_"], ["দ", "`"], ["ধ", "a"], ["ন", "b"],
+      ["প", "c"], ["ফ", "d"], ["ব", "e"], ["ভ", "f"], ["ম", "g"],
+      ["য", "h"], ["র", "i"], ["ল", "j"], ["শ", "k"], ["ষ", "l"],
+      ["স", "m"], ["হ", "n"], ["ড়", "o"], ["ঢ়", "p"], ["য়", "q"],
+      ["ৎ", "r"], ["ং", "s"], ["ঃ", "t"], ["ঁ", "u"],
+      ["া", "v"], ["ি", "w"], ["ী", "x"], ["ু", "y"], ["ূ", "~"],
+      ["ৃ", "…"], ["ে", "†"], ["ৈ", "‡"],
+      ["০", "0"], ["১", "1"], ["২", "2"], ["৩", "3"], ["৪", "4"],
+      ["৫", "5"], ["৬", "6"], ["৭", "7"], ["৮", "8"], ["৯", "9"],
+      ["।", "|"]
+    ];
+
+    function convertUnicodeToBijoy() {
+      let text = document.getElementById("unicodeBox").value;
+      // Split two-part vowels: ো -> ে + া and ৌ -> ে + ৌ
+      text = text.replace(/ো/g, "ো").replace(/ৌ/g, "ৌ");
+      // Move pre-base vowels (ি, ে, ৈ) before the consonant/cluster
+      text = text.replace(/([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)([িেৈ])/g, "$2$1");
+      // Handle Ref (র্) moving to the end of the consonant cluster + kar
+      text = text.replace(/র্([িেৈ]?[ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[াীুূৃ]?)/g, "$1©");
+
+      for (const [uni, bij] of uniToBijoyMap) {
+        text = text.split(uni).join(bij);
+      }
+      text = text.replace(/ৗ/g, "Š");
+      document.getElementById("bijoyBox").value = text;
+      updateStats();
+    }
+
+    function convertBijoyToUnicode() {
+      let text = document.getElementById("bijoyBox").value;
+      text = text.replace(/Š/g, "ৗ");
+
+      // Reverse map (longest Bijoy tokens first)
+      const reverseMap = [...uniToBijoyMap].sort((a, b) => b[1].length - a[1].length);
+      for (const [uni, bij] of reverseMap) {
+        text = text.split(bij).join(uni);
+      }
+
+      // Restore Ref (© -> র্)
+      text = text.replace(/([িেৈ]?[ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[াীুূৃ]?)©/g, "র্$1");
+      // Move pre-base vowels (ি, ে, ৈ) back after the consonant/cluster
+      text = text.replace(/([িেৈ])([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)/g, "$2$1");
+      // Merge ে + া -> ো and ে + ৗ -> ৌ
+      text = text.replace(/ো/g, "ো").replace(/ৌ/g, "ৌ");
+
+      document.getElementById("unicodeBox").value = text;
+      updateStats();
+    }
+
+    function loadOfficialTemplate(type) {
+      const templates = {
+        bn_notice: `গণপ্রজাতন্ত্রী বাংলাদেশ সরকার / প্রতিষ্ঠানের নাম\nস্মারক নং: ..................................          তারিখ: ১৮ অক্টোবর ২০২৬ খ্রি.\n\nঅফিস আদেশ / বিজ্ঞপ্তি\n\nবিষয়: দাপ্তরিক কার্যক্রম ও সফটওয়্যার সিস্টেম হালনাগাদকরণ প্রসঙ্গে।\n\nসংশ্লিষ্ট সকলের অবগতির জন্য জানানো যাচ্ছে যে, আগামী .................... তারিখ হতে দাপ্তরিক ও কারিগরি কার্যক্রম Zisha OS সিকিউর ওয়ার্কস্টেশনের মাধ্যমে পরিচালিত হবে।\n\nস্বাক্ষর/-\nদায়িত্বপ্রাপ্ত কর্মকর্তা\nপদবি ও দপ্তর`,
+        bn_app: `তারিখ: ১৮ অক্টোবর ২০২৬ খ্রি.\n\nবরাবর,\nপ্রধান নির্বাহী কর্মকর্তা / পরিচালক\n....................................................\nঢাকা, বাংলাদেশ।\n\nবিষয়: ........................................................................ প্রসঙ্গে আবেদন।\n\nমহোদয়,\nবিনীত নিবেদন এই যে, আমি নিম্নস্বাক্ষরকারী আপনার প্রতিষ্ঠানে একজন সিনিয়র সফটওয়্যার ও এআই প্রকৌশলী হিসেবে কর্মরত আছি। ........................................................................................\n\nঅতএব, মহোদয়ের নিকট আকুল আবেদন, উপরোক্ত বিষয়টি সদয় বিবেচনা করে প্রয়োজনীয় ব্যবস্থা গ্রহণে আপনার মর্জি হয়।\n\nবিনীত নিবেদক,\nনাম: ..................................\nপদবি: .................................`,
+        en_memo: `MEMORANDUM\n\nDate    : October 18, 2026\nTo      : Engineering & Operations Team\nFrom    : Lead AI & Software Architect\nSubject : Deployment & Security Protocol Update\n\n1. Overview:\nPlease be advised that all development and AI inference workflows have been migrated to Zisha OS 1.0 with isolated localhost firewall rules and encrypted storage.\n\n2. Action Items:\n- Verify local API endpoints on 127.0.0.1\n- Ensure all Git commits pass the built-in secret scanner.\n\nSincerely,\n[Your Name / Designation]`,
+        ai_spec: `# Zisha OS — AI & Web Engineering Specification\n\n- Project Name: \n- Tech Stack: FastAPI + Next.js + Local Ollama (CPU AVX2) / Cloud LLM API\n- Security Checks:\n  [x] API Keys stored in .env (Protected by Zisha OS Git Hook)\n  [x] Dev Ports bound strictly to 127.0.0.1`
+      };
+      if (templates[type]) {
+        document.getElementById("unicodeBox").value = templates[type];
+        updateStats();
+      }
+      document.getElementById("templateSelect").value = "";
+    }
+
+    function copyBox(id) {
+      const el = document.getElementById(id);
+      el.select();
+      navigator.clipboard.writeText(el.value);
+      const toast = document.getElementById("toastMsg");
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 2000);
+    }
+
+    function downloadText(id, filename) {
+      const content = document.getElementById(id).value;
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function clearAll() {
+      document.getElementById("unicodeBox").value = "";
+      document.getElementById("bijoyBox").value = "";
+      updateStats();
+    }
+
+    function updateStats() {
+      const u = document.getElementById("unicodeBox").value.trim();
+      const b = document.getElementById("bijoyBox").value.trim();
+      document.getElementById("unicodeWords").innerText = "শব্দ: " + (u ? u.split(/\s+/).length : 0);
+      document.getElementById("unicodeChars").innerText = "অক্ষর: " + u.length;
+      document.getElementById("bijoyWords").innerText = "শব্দ: " + (b ? b.split(/\s+/).length : 0);
+      document.getElementById("bijoyChars").innerText = "অক্ষর: " + b.length;
+    }
+  </script>
+</body>
+</html>

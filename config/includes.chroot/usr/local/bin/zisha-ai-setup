@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Zisha OS 1.0 — CPU-Optimized AI Engineering Setup & Model Manager
+# Location: /usr/local/bin/zisha-ai-setup
+# ==============================================================================
+set -euo pipefail
+
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${CYAN}======================================================================${NC}"
+echo -e "${GREEN}   Zisha OS 1.0 — CPU-Optimized AI Engineering Studio Setup${NC}"
+echo -e "${CYAN}======================================================================${NC}"
+
+TOTAL_RAM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo "8192")
+CPU_CORES=$(nproc 2>/dev/null || echo "4")
+
+echo -e "[*] Detected Hardware: ${YELLOW}${CPU_CORES} CPU Threads${NC} | ${YELLOW}${TOTAL_RAM_MB} MB RAM${NC} (Integrated Graphics / CPU Mode)"
+echo ""
+
+# 1. Install Ollama if not present
+if ! command -v ollama >/dev/null 2>&1; then
+    echo -e "${CYAN}[1/3] Installing Ollama Local LLM Runtime (CPU AVX2 Mode)...${NC}"
+    curl -fsSL https://ollama.com/install.sh | sh
+else
+    echo -e "${GREEN}[1/3] Ollama is already installed.${NC}"
+fi
+
+# 2. Recommend and Pull Lightweight CPU LLM Models based on RAM
+echo ""
+echo -e "${CYAN}[2/3] Selecting Optimal Local AI Models for your CPU & RAM...${NC}"
+if [ "$TOTAL_RAM_MB" -lt 8000 ]; then
+    RECOMMENDED_CODER="qwen2.5-coder:1.5b"
+    RECOMMENDED_CHAT="llama3.2:1b"
+else
+    RECOMMENDED_CODER="qwen2.5-coder:3b"
+    RECOMMENDED_CHAT="llama3.2:3b"
+fi
+
+echo -e "  -> Recommended Offline Coding Model : ${GREEN}${RECOMMENDED_CODER}${NC}"
+echo -e "  -> Recommended Offline Chat Model   : ${GREEN}${RECOMMENDED_CHAT}${NC}"
+echo -e "  -> Recommended RAG Embedding Model  : ${GREEN}nomic-embed-text${NC}"
+echo ""
+read -r -p "Do you want to download these lightweight CPU AI models now? [Y/n]: " PULL_CONFIRM
+PULL_CONFIRM=${PULL_CONFIRM:-Y}
+
+if [[ "$PULL_CONFIRM" =~ ^[Yy]$ ]]; then
+    ollama pull "$RECOMMENDED_CODER"
+    ollama pull "$RECOMMENDED_CHAT"
+    ollama pull "nomic-embed-text"
+fi
+
+# 3. Setup Python AI Virtual Environment with CPU-Only PyTorch
+AI_DIR="$HOME/Projects/ai-engineering"
+mkdir -p "$AI_DIR"
+cp -rn /etc/zisha-os/ai-template/* "$AI_DIR/" 2>/dev/null || true
+
+echo ""
+echo -e "${CYAN}[3/3] Setting up Python AI Workspace in ${AI_DIR}...${NC}"
+cd "$AI_DIR"
+if command -v uv >/dev/null 2>&1; then
+    uv venv .venv
+    source .venv/bin/activate
+    uv pip install -r requirements-cpu.txt
+else
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements-cpu.txt
+fi
+
+echo ""
+echo -e "${GREEN}======================================================================${NC}"
+echo -e "${GREEN} [SUCCESS] Zisha OS AI Engineering Environment is Ready!${NC}"
+echo -e "  - Activate Python AI Env : ${YELLOW}source ~/Projects/ai-engineering/.venv/bin/activate${NC}"
+echo -e "  - Run Offline Coding AI  : ${YELLOW}ollama run ${RECOMMENDED_CODER}${NC}"
+echo -e "  - Start AI FastAPI Server: ${YELLOW}cd ~/Projects/ai-engineering && uvicorn main_ai_agent:app --reload${NC}"
+echo -e "${GREEN}======================================================================${NC}"

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zisha OS 1.0 — মাস্টার কন্ট্রোল সেন্টার (AI, Dev, Security & Office)</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #151d2e;
+      --card-hover: #1e293b;
+      --border: #2a364f;
+      --primary: #10b981;
+      --secondary: #3b82f6;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'SolaimanLipi', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(135deg, #064e3b 0%, #0f172a 60%, #1e1b4b 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .hero h1 { font-size: 1.75rem; color: #34d399; }
+    .hero p { color: #cbd5e1; font-size: 0.96rem; margin-top: 4px; }
+    .hw-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .badge {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid #334155;
+      color: #38bdf8;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .badge.green { color: #34d399; border-color: #059669; }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 11px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--primary);
+      color: #052e16;
+      border-color: var(--primary);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .card h3 {
+      color: #34d399;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p, .card li { color: #cbd5e1; font-size: 0.93rem; }
+    .card ul, .card ol { padding-left: 20px; margin-top: 8px; }
+    .card li { margin-bottom: 6px; }
+    .btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-green { background: var(--primary); color: #052e16; }
+    .btn-blue { background: var(--secondary); color: #fff; }
+    pre {
+      background: #070a12;
+      border: 1px solid #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      color: #38bdf8;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    textarea, input, select {
+      width: 100%;
+      background: #090d16;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    .status-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #090d16;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1>⚡ Zisha OS 1.0 — মাস্টার কন্ট্রোল সেন্টার</h1>
+        <p>ওয়েব ও সফটওয়্যার ডেভেলপমেন্ট • CPU-Optimized AI ইঞ্জিনিয়ারিং • সাইবার সিকিউরিটি • বাংলা ও ইংরেজি অফিস</p>
+        <div class="hw-badges">
+          <span class="badge green">Detected CPU: 13th Gen Intel Core i3-1315U (6C / 8T)</span>
+          <span class="badge">RAM: 8 GB (zram 50% Boost Ready)</span>
+          <span class="badge">AI Mode: CPU AVX2 + Cloud API</span>
+          <span class="badge green">Firewall & Secret Scanner: Active</span>
+        </div>
+      </div>
+      <div>
+        <a class="btn btn-green" href="../bangla-converter/index.html" target="_blank">📝 বাংলা ইউনিকোড ⇄ বিজয় কনভার্টার খুলুন</a>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('tab-install', this)">💿 ১. Zisha OS ইনস্টল ও ISO গাইড</button>
+      <button class="tab-btn" onclick="showTab('tab-ai', this)">🤖 ২. AI ইঞ্জিনিয়ারিং স্টুডিও (CPU + API)</button>
+      <button class="tab-btn" onclick="showTab('tab-sec', this)">🛡️ ৩. কোড ও API Key সিকিউরিটি স্ক্যানার</button>
+      <button class="tab-btn" onclick="showTab('tab-office', this)">🏢 ৪. বাংলা ও ইংরেজি অফিস ওয়ার্কস্টেশন</button>
+    </div>
+
+    <!-- TAB 1: INSTALLATION & ISO GUIDE -->
+    <div id="tab-install" class="tab-content active">
+      <div class="grid-3">
+        <div class="card">
+          <h3>☁️ পদ্ধতি ক: ক্লাউডে অটোমেটিক `.ISO` তৈরি (সবচেয়ে সহজ)</h3>
+          <p>আপনার ৮ জিবি র‍্যামের ল্যাপটপে বাড়তি চাপ না দিয়েই সরাসরি GitHub ক্লাউড সার্ভারে <code>zisha-os-1.0-amd64.iso</code> তৈরি করতে পারবেন:</p>
+          <ol>
+            <li>আপনার <code>Zisha-OS</code> ফোল্ডারটি নিজের GitHub রিপোজিটরিতে পুশ করুন।</li>
+            <li>প্রজেক্টে থাকা <code>.github/workflows/build-zisha-os-iso.yml</code> স্বয়ংক্রিয়ভাবে চালু হয়ে আপনাকে রেডিমেড <strong><code>zisha-os-1.0-amd64.iso</code></strong> ডাউনলোড লিংক দিয়ে দেবে!</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>💻 পদ্ধতি খ: আপনার HP ল্যাপটপে লোকাল ISO বিল্ড / WSL2</h3>
+          <p>আপনার HP পিসিতে <code>Virtualization (VT-x)</code> বর্তমানে বন্ধ (False) আছে। এটি চালু করতে:</p>
+          <ol>
+            <li>পিসি রিস্টার্ট দিয়ে শুরুর সাথে সাথে বারবার <strong><code>F10</code></strong> চেপে HP BIOS-এ যান।</li>
+            <li><strong>Configuration / Advanced ➔ Virtualization Technology (VTx) ➔ Enabled</strong> করুন এবং <strong><code>F10</code></strong> চেপে সেভ করুন।</li>
+            <li>Windows চালু হলে Admin PowerShell-এ রান করুন:</li>
+          </ol>
+          <pre>wsl --install -d Debian</pre>
+        </div>
+
+        <div class="card">
+          <h3>🔌 পদ্ধতি গ: পেনড্রাইভে পিসিতে সরাসরি ইনস্টল (Dual-Boot)</h3>
+          <p>যেকোনো হালকা Debian 12 ISO বা Zisha OS ISO পেনড্রাইভে বুটেবল করে (Rufus/Ventoy দিয়ে):</p>
+          <ol>
+            <li>HP ল্যাপটপ রিস্টার্ট দিয়ে <strong><code>F9</code></strong> চেপে USB Drive থেকে বুট করুন।</li>
+            <li>ইন্সটল শেষে টার্মিনালে এক কমান্ডেই পুরো সিস্টেমকে <strong>Zisha OS 1.0</strong>-এ রূপান্তর করুন:</li>
+          </ol>
+          <pre>sudo bash scripts/install-on-existing-linux.sh</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: AI ENGINEERING STUDIO -->
+    <div id="tab-ai" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>🤖 আপনার i3-1315U (8GB RAM)-এর জন্য সেরা লোকাল AI মডেল</h3>
+          <p>আলাদা গ্রাফিক্স কার্ড ছাড়া আপনার 13th Gen Intel CPU-তে দ্রুত চালানোর জন্য এই মডেলগুলো অপ্টিমাইজ করা হয়েছে:</p>
+          <ul>
+            <li><strong>অফলাইন কোডিং অ্যাসিস্ট্যান্ট:</strong> <code>ollama run qwen2.5-coder:1.5b</code> (মাত্র ১.১ জিবি র‍্যাম নেয়, সুপার ফাস্ট!)</li>
+            <li><strong>অফলাইন চ্যাট ও ডকুমেন্ট ড্রাফটিং:</strong> <code>ollama run llama3.2:1b</code> অথবা <code>gemma2:2b</code></li>
+            <li><strong>RAG / Vector Database Embedding:</strong> <code>ollama pull nomic-embed-text</code></li>
+          </ul>
+          <pre># Windows বা Zisha OS টার্মিনালে লোকাল AI টেস্ট করতে:
+ollama run qwen2.5-coder:1.5b</pre>
+        </div>
+
+        <div class="card">
+          <h3>⚡ লোকাল Ollama AI টেস্টার (127.0.0.1:11434)</h3>
+          <p>আপনার পিসিতে Ollama চালু থাকলে এখান থেকেই সরাসরি প্রম্পট টেস্ট করুন:</p>
+          <input id="aiModel" value="qwen2.5-coder:1.5b" placeholder="Model name (e.g. qwen2.5-coder:1.5b)" />
+          <textarea id="aiPrompt" rows="4" placeholder="এখানে আপনার কোডিং বা AI প্রশ্ন লিখুন... (যেমন: Write a FastAPI JWT authentication middleware in Python)"></textarea>
+          <button class="btn btn-green" onclick="testLocalOllama()">🚀 লোকাল AI রান করুন</button>
+          <div class="status-box" id="aiOutput">রেজাল্ট এখানে দেখা যাবে...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SECURITY & SECRET SCANNER -->
+    <div id="tab-sec" class="tab-content">
+      <div class="card">
+        <h3>🛡️ Zisha OS অফলাইন সিকিউরিটি ও API Key লিক স্ক্যানার</h3>
+        <p>গিটহাবে কোড পুশ করার আগে বা ক্লায়েন্টকে ফাইল দেওয়ার আগে আপনার কোড বা কনফিগারেশন এখানে পেস্ট করে চেক করুন কোনো গোপন <strong>OpenAI, Gemini, Anthropic, AWS বা GitHub Token</strong> ভুলবশত রয়ে গেছে কি না:</p>
+        <textarea id="secInput" rows="7" placeholder="আপনার কোড, .env বা কনফিগারেশন ফাইল এখানে পেস্ট করে স্ক্যান করুন..."></textarea>
+        <button class="btn btn-green" onclick="scanSecrets()">🔍 সিকিউরিটি স্ক্যান করুন</button>
+        <div class="status-box" id="secResult">কোনো কোড স্ক্যান করা হয়নি।</div>
+      </div>
+    </div>
+
+    <!-- TAB 4: BANGLA & ENGLISH OFFICE WORKSTATION -->
+    <div id="tab-office" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>📝 বাংলা ইউনিকোড (অভ্র/নিকষ) ⇄ বিজয় (SutonnyMJ)</h3>
+          <p>সরকারি ও বেসরকারি অফিসের সব ধরনের বাংলা ও ইংরেজি চিঠিপত্র, অফিস আদেশ, আবেদনপত্র এবং ফন্ট কনভার্সনের জন্য Zisha OS-এর নিজস্ব অফলাইন কনভার্টার ও ড্রাফট প্যাড:</p>
+          <a class="btn btn-green" href="../bangla-converter/index.html" target="_blank">🚀 বাংলা ও ইংরেজি অফিস সহায়িকা ওপেন করুন</a>
+        </div>
+        <div class="card">
+          <h3>🏢 Zisha OS-এ প্রি-কনফিগারড অফিস টুলস</h3>
+          <ul>
+            <li><strong>কিবোর্ড:</strong> অভ্র ফোনেটিক (Avro) + বিজয় (Unijoy) + প্রভাত + English (<code>Super + Space</code> শর্টকাট)।</li>
+            <li><strong>ডকুমেন্ট ও স্প্রেডশিট:</strong> OnlyOffice Desktop Editors এবং LibreOffice Writer/Calc/Impress।</li>
+            <li><strong>বাংলা OCR:</strong> ছবি বা স্ক্যান করা পিডিএফ থেকে বাংলা লেখা এডিট করার জন্য <code>gImageReader</code> + <code>tesseract-ocr-ben</code>।</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    async function testLocalOllama() {
+      const model = document.getElementById('aiModel').value.trim();
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const out = document.getElementById('aiOutput');
+      if (!prompt) { out.innerText = "অনুগ্রহ করে একটি প্রশ্ন বা প্রম্পট লিখুন।"; return; }
+      out.innerText = "লোকাল Ollama (127.0.0.1:11434)-এর সাথে সংযোগ করা হচ্ছে...";
+      try {
+        const res = await fetch("http://127.0.0.1:11434/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model, prompt, stream: false })
+        });
+        const data = await res.json();
+        out.innerText = data.response || JSON.stringify(data);
+      } catch (e) {
+        out.innerText = "লোকাল Ollama সার্ভিসটি বর্তমানে চালু নেই। টার্মিনালে 'ollama serve' বা 'ollama run " + model + "' চালিয়ে পুনরায় চেষ্টা করুন।";
+      }
+    }
+
+    function scanSecrets() {
+      const code = document.getElementById('secInput').value;
+      const resBox = document.getElementById('secResult');
+      const rules = [
+        { name: "OpenAI / Standard Secret Key (sk-...)", regex: /sk-[a-zA-Z0-9]{20,}/g },
+        { name: "Anthropic Claude API Key (sk-ant-...)", regex: /sk-ant-[a-zA-Z0-9\-_]{20,}/g },
+        { name: "Google Gemini / Cloud API Key (AIzaSy...)", regex: /AIzaSy[a-zA-Z0-9\-_]{33}/g },
+        { name: "GitHub Personal Access Token (ghp_...)", regex: /ghp_[a-zA-Z0-9]{36}/g },
+        { name: "AWS Access Key ID (AKIA...)", regex: /AKIA[0-9A-Z]{16}/g },
+        { name: "Private SSH/RSA Key", regex: /-----BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY-----/g }
+      ];
+      let findings = [];
+      for (const r of rules) {
+        if (r.regex.test(code)) {
+          findings.push("⚠️ সনাক্ত হয়েছে: " + r.name);
+        }
+      }
+      if (findings.length === 0) {
+        resBox.style.borderColor = "#10b981";
+        resBox.style.color = "#34d399";
+        resBox.innerText = "✅ নিরাপদ! আপনার কোডে কোনো গোপন API Key বা Private Key পাওয়া যায়নি।";
+      } else {
+        resBox.style.borderColor = "#ef4444";
+        resBox.style.color = "#f87171";
+        resBox.innerHTML = "<strong>🚨 সতর্কবার্তা! নিচের গোপন কী-গুলো আপনার কোডে পাওয়া গেছে (এগুলো .env ফাইলে সরিয়ে ফেলুন):</strong><br/>" + findings.join("<br/>");
+      }
+    }
+  </script>
+</body>
+</html>
