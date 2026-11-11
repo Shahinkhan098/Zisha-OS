@@ -32,6 +32,38 @@ apt-get install -y --no-install-recommends \
     calamares-settings-debian
 
 # ------------------------------------------------------------------------------
+# 0. Install Google Chrome Stable & Set as Default System Web Browser
+# ------------------------------------------------------------------------------
+echo "[Zisha OS] ===> Installing Google Chrome Stable as Default Browser..."
+curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
+    | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg || true
+
+if [ -f /usr/share/keyrings/google-chrome.gpg ]; then
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+        > /etc/apt/sources.list.d/google-chrome.list
+    apt-get update && apt-get install -y --no-install-recommends google-chrome-stable || true
+fi
+
+if command -v google-chrome-stable >/dev/null 2>&1; then
+    update-alternatives --set x-www-browser /usr/bin/google-chrome-stable || true
+    update-alternatives --set gnome-www-browser /usr/bin/google-chrome-stable || true
+fi
+
+mkdir -p /etc/xdg/xfce4 /etc/xdg
+cat > /etc/xdg/xfce4/helpers.rc << 'EOF'
+WebBrowser=google-chrome
+EOF
+
+cat > /etc/xdg/mimeapps.list << 'EOF'
+[Default Applications]
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+EOF
+
+# ------------------------------------------------------------------------------
 # 1. Create Desktop Application Shortcuts (.desktop files) for Zisha OS Tools
 # ------------------------------------------------------------------------------
 echo "[Zisha OS] ===> Creating Zisha OS Application Launchers..."
@@ -97,6 +129,9 @@ cp /usr/share/applications/zisha-bangla-converter.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-ai-setup.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-security-audit.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-install-antigravity.desktop /etc/skel/Desktop/
+if [ -f /usr/share/applications/google-chrome.desktop ]; then
+    cp /usr/share/applications/google-chrome.desktop /etc/skel/Desktop/
+fi
 chmod +x /etc/skel/Desktop/*.desktop
 
 # ------------------------------------------------------------------------------

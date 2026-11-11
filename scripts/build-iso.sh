@@ -49,7 +49,7 @@ cp "${PROJECT_ROOT}/scripts/modules/03-webdev-ai-stack.sh" config/hooks/normal/0
 cp "${PROJECT_ROOT}/scripts/modules/04-desktop-ui.sh" config/hooks/normal/0400-desktop-ui.hook.chroot
 chmod +x config/hooks/normal/*.hook.chroot
 
-# 4. Add Core Live-Boot Packages List
+# 4. Add Core Live-Boot & Wi-Fi Firmware Packages List
 mkdir -p config/package-lists
 cat > config/package-lists/zisha-core.list.chroot << 'EOF'
 live-boot
@@ -58,7 +58,18 @@ live-config-systemd
 systemd-sysv
 sudo
 network-manager
-firmware-linux-free
+network-manager-gnome
+wpasupplicant
+wireless-tools
+iw
+rfkill
+firmware-linux
+firmware-linux-nonfree
+firmware-misc-nonfree
+firmware-iwlwifi
+firmware-realtek
+firmware-atheros
+firmware-brcm80211
 cryptsetup
 lvm2
 EOF

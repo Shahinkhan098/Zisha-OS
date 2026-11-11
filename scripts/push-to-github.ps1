@@ -2,6 +2,14 @@ $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $ProjectRoot
 
+# Normalize Linux scripts and configs to LF line endings
+$linuxFiles = Get-ChildItem -Path "scripts", "config", "wifi-fix" -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -ne ".ps1" }
+foreach ($f in $linuxFiles) {
+    $content = [System.IO.File]::ReadAllText($f.FullName)
+    $lfContent = $content -replace "`r`n", "`n"
+    [System.IO.File]::WriteAllText($f.FullName, $lfContent, (New-Object System.Text.UTF8Encoding $false))
+}
+
 $code = @'
 using System;
 using System.Runtime.InteropServices;
@@ -47,8 +55,8 @@ Add-Type -TypeDefinition $code
 
 $Token = [CredHelper]::GetToken("git:https://github.com")
 git add -A
-git commit -m "feat: add zisha-install-antigravity and zisha-update OTA updater"
+git commit -m "feat: add Google Chrome as default browser and include Wi-Fi firmware"
 git remote set-url origin "https://Shahinkhan098:$Token@github.com/Shahinkhan098/Zisha-OS.git"
 git push origin main
 git remote set-url origin "https://github.com/Shahinkhan098/Zisha-OS.git"
-Write-Host "[SUCCESS] Pushed latest Zisha OS updates to https://github.com/Shahinkhan098/Zisha-OS" -ForegroundColor Green
+Write-Host "[SUCCESS] Pushed Google Chrome & Wi-Fi updates to https://github.com/Shahinkhan098/Zisha-OS" -ForegroundColor Green
