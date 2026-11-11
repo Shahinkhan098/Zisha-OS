@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Zisha OS 1.0 — Google Antigravity IDE & CLI (agy) One-Click Installer
+# Location: /usr/local/bin/zisha-install-antigravity
+# ==============================================================================
+set -euo pipefail
+
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${CYAN}======================================================================${NC}"
+echo -e "${GREEN}   Zisha OS 1.0 — Google Antigravity (IDE & CLI) Setup${NC}"
+echo -e "${CYAN}======================================================================${NC}"
+echo ""
+
+# 1. Install Antigravity CLI (agy)
+echo -e "${CYAN}[1/2] Installing Antigravity CLI (agy)...${NC}"
+curl -fsSL https://antigravity.google/cli/install.sh | bash || echo -e "${YELLOW}[i] Visit https://antigravity.google/docs for manual CLI setup if needed.${NC}"
+
+# 2. Download & Setup Antigravity Desktop / IDE for Linux (x64)
+AGY_DIR="$HOME/.local/opt/Antigravity"
+mkdir -p "$AGY_DIR" "$HOME/.local/share/applications" "$HOME/.local/bin"
+
+echo ""
+echo -e "${CYAN}[2/2] Downloading Google Antigravity for Linux (Debian/Ubuntu x64)...${NC}"
+TMP_TAR="/tmp/Antigravity-linux-x64.tar.gz"
+if curl -fL "https://antigravity.google/download/linux" -o "$TMP_TAR"; then
+    echo -e "${CYAN}[*] Extracting Antigravity to ${AGY_DIR}...${NC}"
+    tar -xzf "$TMP_TAR" -C "$AGY_DIR" --strip-components=1 2>/dev/null || tar -xzf "$TMP_TAR" -C "$AGY_DIR"
+    rm -f "$TMP_TAR"
+
+    cat > "$HOME/.local/share/applications/antigravity.desktop" << EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Google Antigravity
+Comment=AI-First Agentic Coding IDE & Platform
+Exec=${AGY_DIR}/Antigravity --no-sandbox %F
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;IDE;
+EOF
+    chmod +x "$HOME/.local/share/applications/antigravity.desktop"
+    echo -e "${GREEN}[SUCCESS] Google Antigravity Desktop App installed to Application Menu!${NC}"
+else
+    echo -e "${YELLOW}[i] Opening https://antigravity.google in your browser to download the latest Linux build...${NC}"
+    xdg-open "https://antigravity.google" 2>/dev/null || true
+fi
+
+echo ""
+echo -e "${GREEN}======================================================================${NC}"
+echo -e "  - Launch Antigravity CLI in terminal : ${YELLOW}agy${NC}"
+echo -e "  - Launch Antigravity Desktop / IDE   : ${YELLOW}${AGY_DIR}/Antigravity${NC} (or from Start Menu)"
+echo -e "  - Documentation                      : ${CYAN}https://antigravity.google/docs${NC}"
+echo -e "${GREEN}======================================================================${NC}"

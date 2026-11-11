@@ -79,9 +79,24 @@ Categories=System;Security;
 Keywords=Security;Firewall;Audit;Zisha;
 EOF
 
+# Launcher 4: Google Antigravity Setup (IDE & CLI)
+cat > /usr/share/applications/zisha-install-antigravity.desktop << 'EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install Google Antigravity (IDE & CLI)
+Comment=One-click installer for Google Antigravity IDE and agy CLI on Zisha OS
+Exec=xfce4-terminal --hold -e "/usr/local/bin/zisha-install-antigravity"
+Icon=applications-development
+Terminal=false
+Categories=Development;IDE;
+Keywords=Antigravity;AGY;Google;AI;IDE;Zisha;
+EOF
+
 cp /usr/share/applications/zisha-bangla-converter.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-ai-setup.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-security-audit.desktop /etc/skel/Desktop/
+cp /usr/share/applications/zisha-install-antigravity.desktop /etc/skel/Desktop/
 chmod +x /etc/skel/Desktop/*.desktop
 
 # ------------------------------------------------------------------------------
