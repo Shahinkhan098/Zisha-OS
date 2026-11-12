@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>Zisha OS 1.0 — সম্পূর্ণ নতুন ইনস্টলেশন গাইডলাইন</title>
+<style>
+  body { font-family: 'Segoe UI', 'Hind Siliguri', 'Nikosh', Arial, sans-serif; line-height: 1.6; color: #1e293b; padding: 30px; }
+  h1 { color: #065f46; border-bottom: 2px solid #10b981; padding-bottom: 8px; font-size: 24pt; }
+  h2 { color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-top: 25px; font-size: 16pt; }
+  h3 { color: #1e3a8a; margin-top: 18px; font-size: 13pt; }
+  .alert { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 15px 0; border-radius: 4px; }
+  .tip { background: #f0fdf4; border-left: 4px solid #10b981; padding: 12px 16px; margin: 15px 0; border-radius: 4px; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 10.5pt; color: #0f172a; }
+  pre { background: #0f172a; color: #38bdf8; padding: 14px; border-radius: 6px; font-family: 'Courier New', monospace; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+  th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
+  th { background-color: #f8fafc; font-weight: bold; }
+  ul, ol { padding-left: 25px; }
+  li { margin-bottom: 8px; }
+  kbd { background: #e2e8f0; border: 1px solid #94a3b8; border-radius: 3px; padding: 2px 6px; font-size: 9pt; }
+</style>
+</head>
+<body>
+
+<h1>⚡ Zisha OS 1.0 — সম্পূর্ণ নতুন ইনস্টলেশন গাইডলাইন (Step-by-Step Manual)</h1>
+<p><strong>লক্ষ্য:</strong> আপনার কম্পিউটারে Windows সম্পূর্ণ মুছে ফেলে <strong>সর্বোচ্চ সাইবার সিকিউরিটি (LUKS2 Full Disk Encryption)</strong>, <strong>Realtek Wi-Fi 6</strong>, <strong>CPU-Optimized AI স্ট্যাক</strong> এবং <strong>বাংলা ও ইংরেজি অফিস স্যুটসহ</strong> Zisha OS ফ্রেশ ইনস্টল করা।</p>
+
+<hr/>
+
+<h2>📋 পর্ব ১: প্রস্তুতি ও পূর্বশর্ত (Pre-requisites)</h2>
+<ol>
+  <li><strong>একটি পেনড্রাইভ:</strong> ন্যূনতম ৮ জিবি বা তার বেশি ধারণক্ষমতার একটি USB পেনড্রাইভ।</li>
+  <li><strong>ব্যক্তিগত ডেটা ব্যাকআপ:</strong>
+    <div class="alert">
+      <strong>⚠️ অত্যন্ত গুরুত্বপূর্ণ:</strong> যেহেতু সম্পূর্ণ ডিস্ক মুছে নতুন করে ইনস্টল হবে, তাই আপনার বর্তমান পিসির <code>C:</code>, <code>D:</code>, বা <code>E:</code> ড্রাইভে কোনো জরুরি ব্যক্তিগত ফাইল বা ছবি থাকলে তা অন্য কোনো এক্সটারনাল হার্ডডিস্ক, পেনড্রাইভ বা গুগল ড্রাইভে ব্যাকআপ করে রাখুন।
+    </div>
+  </li>
+  <li><strong>প্রয়োজনীয় ফাইলসমূহ:</strong>
+    <ul>
+      <li><strong>Zisha OS ISO:</strong> GitHub Actions থেকে ডাউনলোড করা সর্বশেষ <code>zisha-os-1.0-amd64.iso</code>।</li>
+      <li><strong>Rufus Software:</strong> পেনড্রাইভ বুটেবল করার জন্য Rufus।</li>
+    </ul>
+  </li>
+</ol>
+
+<h2>💾 পর্ব ২: পেনড্রাইভ বুটেবল তৈরি করা (Windows-এ)</h2>
+<ol>
+  <li>পেনড্রাইভটি ল্যাপটপে সংযুক্ত করুন।</li>
+  <li><strong>Rufus</strong> ওপেন করুন (অনুমতি চাইলে <code>Yes</code> দিন)।</li>
+  <li>Rufus উইন্ডোতে নিচের অপশনগুলো নির্বাচন করুন:
+    <ul>
+      <li><strong>Device:</strong> আপনার পেনড্রাইভটি সিলেক্ট করুন।</li>
+      <li><strong>Boot selection:</strong> ডানে থাকা <strong>SELECT</strong> বাটনে ক্লিক করে <code>zisha-os-1.0-amd64.iso</code> ফাইলটি দেখিয়ে দিন।</li>
+      <li><strong>Partition scheme:</strong> <strong><code>GPT</code></strong> নির্বাচন করুন।</li>
+      <li><strong>Target system:</strong> <strong><code>UEFI (non CSM)</code></strong> নির্বাচন করুন।</li>
+    </ul>
+  </li>
+  <li>নিচে থাকা <strong>START</strong> বাটনে ক্লিক করুন।</li>
+  <li>কোনো পপ-আপ আসলে <strong><code>OK</code></strong> দিন।</li>
+  <li>নিচের প্রগ্রেস বারটি ১০০% হয়ে <strong><code>READY</code></strong> লেখা আসা পর্যন্ত অপেক্ষা করুন।</li>
+  <li><code>CLOSE</code> বাটনে ক্লিক করে Rufus বন্ধ করুন।</li>
+</ol>
+
+<h2>⚙️ পর্ব ৩: HP ল্যাপটপ BIOS ও Boot মেনু সেটআপ</h2>
+<ol>
+  <li>পেনড্রাইভ লাগানো অবস্থাতেই কম্পিউটার <strong>Shut Down (বন্ধ)</strong> করুন।</li>
+  <li>ল্যাপটপ চালু করার সাথে সাথে কিবোর্ডের <kbd>Esc</kbd> বাটনটি প্রতি সেকেন্ডে দুইবার করে চাপতে থাকুন যতক্ষণ না <strong>Startup Menu</strong> আসে।</li>
+  <li><strong>Secure Boot বন্ধ করতে (যদি প্রয়োজন হয়):</strong> কিবোর্ডের <kbd>F10</kbd> চেপে BIOS-এ গিয়ে <strong>Security / Boot Options</strong> থেকে <code>Secure Boot</code> অপশনটি <code>Disabled</code> করুন এবং <kbd>F10</kbd> চেপে সেভ করুন।</li>
+  <li><strong>সরাসরি বুট করতে:</strong> কম্পিউটার চালু হওয়ার সময় বারবার <kbd>F9</kbd> (Boot Device Options) চাপুন এবং তালিকা থেকে আপনার <strong>USB Drive</strong> সিলেক্ট করে <kbd>Enter</kbd> চাপুন।</li>
+</ol>
+
+<h2>🖥️ পর্ব ৪: লাইভ মোড ও ইনস্টলেশন প্রক্রিয়া</h2>
+<p>পেনড্রাইভ বুট হলে স্ক্রিনে Zisha OS-এর বুট অপশন আসবে। <strong>Live System</strong> নির্বাচন করে Enter দিন। ডেস্কটপ চালু হলে:</p>
+<ol>
+  <li>ডেস্কটপে থাকা <strong>Install Zisha OS</strong> আইকনে ডাবল-ক্লিক করুন।</li>
+  <li><strong>Language:</strong> <code>English (United States)</code> সিলেক্ট করে <strong>Next</strong> দিন।</li>
+  <li><strong>Timezone:</strong> বাংলাদেশ (<code>Asia/Dhaka</code>) সিলেক্ট করে <strong>Next</strong> দিন।</li>
+  <li><strong>Keyboard Layout:</strong> <code>English (US) - Default</code> সিলেক্ট করে <strong>Next</strong> দিন।</li>
+  <li><strong>Partitions (পার্টিশন - সবচেয়ে গুরুত্বপূর্ণ ধাপ):</strong>
+    <ul>
+      <li>এখানে <strong>Erase disk</strong> অপশনটি সিলেক্ট করুন।</li>
+      <li><div class="tip"><strong>🛡️ সর্বোচ্চ সিকিউরিটি নিশ্চিত করতে:</strong> নিচে থাকা <strong>Encrypt system</strong> (LUKS2 Encryption) অপশনটিতে টিক দিন এবং একটি শক্তিশালী পাসওয়ার্ড দিন।</div></li>
+      <li><strong>Next</strong> ক্লিক করুন।</li>
+    </ul>
+  </li>
+  <li><strong>Users:</strong> আপনার নাম, ইউজারনেম এবং পাসওয়ার্ড দিয়ে <strong>Next</strong> দিন।</li>
+  <li><strong>Install Now:</strong> সব তথ্য মিলিয়ে <strong>Install Now</strong> বাটনে ক্লিক করুন। ইনস্টল হতে ৫-৮ মিনিট সময় লাগবে।</li>
+  <li>ইনস্টল শেষ হলে <strong>Restart now</strong>-এ টিক দিয়ে <strong>Done</strong> ক্লিক করুন এবং পেনড্রাইভটি খুলে ফেলুন।</li>
+</ol>
+
+<h2>🚀 পর্ব ৫: প্রথমবার বুট ও চূড়ান্ত কনফিগারেশন</h2>
+<ol>
+  <li><strong>ডিস্ক আনলক:</strong> কম্পিউটার অন হওয়ার সাথে সাথে ইনস্টলের সময় দেওয়া এনক্রিপশন পাসওয়ার্ড লিখে Enter দিন।</li>
+  <li><strong>Wi-Fi কানেক্ট:</strong> টাস্কবারের নিচে ডানপাশের নেটওয়ার্ক আইকনে ক্লিক করে অথবা টার্মিনালে <code>nmtui</code> লিখে ওয়াইফাই কানেক্ট করুন।</li>
+  <li><strong>সব নতুন টুল ও আপডেট সক্রিয় করতে:</strong> টার্মিনাল খুলে চালান:
+    <pre>sudo zisha-update</pre>
+  </li>
+  <li><strong>Google Antigravity চালু করতে:</strong> টার্মিনালে চালান:
+    <pre>zisha-install-antigravity</pre>
+  </li>
+  <li><strong>বাংলা ও ইংরেজি টাইপিং:</strong> কিবোর্ডে <kbd>Super + Space</kbd> (উইন্ডোজ বাটন + স্পেস) চাপলেই মুহূর্তের মধ্যে <strong>English ⇄ অভ্র ⇄ বিজয়</strong> পরিবর্তন হবে।</li>
+</ol>
+
+<hr/>
+<p style='color: #059669; font-weight: bold;'>অভিনন্দন! আপনার কম্পিউটার এখন একটি সম্পূর্ণ নিরাপদ, সামরিক-গ্রেডের এনক্রিপশনযুক্ত এবং অত্যন্ত দ্রুতগতির Zisha OS ওয়ার্কস্টেশন!</p>
+
+</body>
+</html>
