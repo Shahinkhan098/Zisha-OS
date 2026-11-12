@@ -62,13 +62,43 @@ cat > /etc/docker/daemon.json << 'EOF'
 EOF
 
 # ------------------------------------------------------------------------------
-# 2. Install Fast JS/TS Tooling (pnpm) & Python Rust Package Manager (uv)
+# 2. Install Fast JS/TS Tooling (pnpm, Bun) & Python Package Manager (uv)
 # ------------------------------------------------------------------------------
-echo "[Zisha OS] ===> Installing pnpm & uv (Ultra-Fast Python Package Manager)..."
+echo "[Zisha OS] ===> Installing pnpm, Bun & uv (Ultra-Fast Python Package Manager)..."
 npm install -g pnpm || true
+
+# Install Bun globally
+curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash || true
 
 # Install uv globally to /usr/local/bin
 curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sh || true
+
+# ------------------------------------------------------------------------------
+# 2.1 Install GitHub CLI (gh), Bruno (API Client) & Beekeeper Studio (DB GUI)
+# ------------------------------------------------------------------------------
+echo "[Zisha OS] ===> Setting up GitHub CLI, Bruno & Beekeeper Studio..."
+# GitHub CLI
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg 2>/dev/null || true
+if [ -f /usr/share/keyrings/githubcli-archive-keyring.gpg ]; then
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list
+    apt-get update && apt-get install -y --no-install-recommends gh || true
+fi
+
+# Bruno (Lightweight, Offline Postman Alternative)
+mkdir -p /etc/apt/keyrings
+gpg --no-default-keyring --keyring /etc/apt/keyrings/bruno.gpg --keyserver keyserver.ubuntu.com --recv-keys 9FA6017ECABE0266 2>/dev/null || true
+if [ -f /etc/apt/keyrings/bruno.gpg ]; then
+    echo "deb [signed-by=/etc/apt/keyrings/bruno.gpg] http://debian.usebruno.com/ bruno stable" > /etc/apt/sources.list.d/bruno.list
+    apt-get update && apt-get install -y --no-install-recommends bruno || true
+fi
+
+# Beekeeper Studio (Clean, Lightweight Database GUI for PostgreSQL/MySQL/SQLite)
+curl -fsSL https://deb.beekeeperstudio.io/beekeeper.key | gpg --dearmor --yes -o /usr/share/keyrings/beekeeper.gpg || true
+if [ -f /usr/share/keyrings/beekeeper.gpg ]; then
+    echo "deb [signed-by=/usr/share/keyrings/beekeeper.gpg] https://deb.beekeeperstudio.io stable main" > /etc/apt/sources.list.d/beekeeper-studio-app.list
+    apt-get update && apt-get install -y --no-install-recommends beekeeper-studio || true
+fi
 
 # ------------------------------------------------------------------------------
 # 3. Install VSCodium (Telemetry-Free Open Source VS Code)

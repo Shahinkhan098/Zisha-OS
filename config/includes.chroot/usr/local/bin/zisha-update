@@ -23,10 +23,11 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-echo -e "${CYAN}[1/4] Updating Debian Security & System Packages...${NC}"
+echo -e "${CYAN}[1/5] Updating Debian Security & System Packages...${NC}"
 apt-get update && apt-get upgrade -y
 
-echo -e "${CYAN}[2/4] Ensuring Google Chrome Stable is Installed & Set as Default Browser...${NC}"
+echo -e "${CYAN}[2/5] Ensuring Essential Tools (Chrome, Brave, KeePassXC, GH CLI, Bun) are active...${NC}"
+# Google Chrome
 if ! command -v google-chrome-stable >/dev/null 2>&1; then
     curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor --yes -o /usr/share/keyrings/google-chrome.gpg || true
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
@@ -37,7 +38,30 @@ if command -v google-chrome-stable >/dev/null 2>&1; then
     update-alternatives --set gnome-www-browser /usr/bin/google-chrome-stable || true
 fi
 
-echo -e "${CYAN}[3/4] Fetching Latest Zisha OS Features from GitHub (${REPO_URL})...${NC}"
+# KeePassXC (Offline Password & Secret Vault)
+apt-get install -y keepassxc || true
+
+# GitHub CLI (gh)
+if ! command -v gh >/dev/null 2>&1; then
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg 2>/dev/null || true
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg || true
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list
+    apt-get update && apt-get install -y gh || true
+fi
+
+# Bun (Ultra-Fast JS/TS Runtime)
+if ! command -v bun >/dev/null 2>&1; then
+    curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash || true
+fi
+
+# Brave Browser (Privacy & Research Browser)
+if ! command -v brave-browser >/dev/null 2>&1; then
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg || true
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
+    apt-get update && apt-get install -y brave-browser || true
+fi
+
+echo -e "${CYAN}[3/5] Fetching Latest Zisha OS Features from GitHub (${REPO_URL})...${NC}"
 if [ -d "$CACHE_DIR/.git" ]; then
     git -C "$CACHE_DIR" pull --ff-only origin main
 else
@@ -45,12 +69,17 @@ else
     git clone --depth 1 "$REPO_URL" "$CACHE_DIR"
 fi
 
-echo -e "${CYAN}[4/4] Applying Updated Zisha OS Tools, Configs & Apps...${NC}"
+echo -e "${CYAN}[4/5] Applying Updated Zisha OS Tools, Configs & Apps...${NC}"
 cp -r "$CACHE_DIR/config/includes.chroot/"* /
 chmod +x /usr/local/bin/zisha-*
 sysctl --system >/dev/null 2>&1 || true
 
+echo -e "${CYAN}[5/5] Checking Realtek RTL8852BE Wi-Fi Driver status...${NC}"
+modprobe -r rtw89_8852be rtw89_8852ce 2>/dev/null || true
+modprobe rtw89_8852be 2>/dev/null || true
+systemctl restart NetworkManager 2>/dev/null || true
+
 echo ""
 echo -e "${GREEN}======================================================================${NC}"
-echo -e "${GREEN} [SUCCESS] Zisha OS is now up to date with Google Chrome & latest features!${NC}"
+echo -e "${GREEN} [SUCCESS] Zisha OS is up to date with all Dev, AI, Security & Office tools!${NC}"
 echo -e "${GREEN}======================================================================${NC}"

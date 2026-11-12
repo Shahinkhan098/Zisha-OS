@@ -32,7 +32,19 @@ apt-get install -y --no-install-recommends \
     auditd \
     libpam-tmpdir \
     unattended-upgrades \
-    apt-listchanges
+    apt-listchanges \
+    keepassxc
+
+# ------------------------------------------------------------------------------
+# 0. Install Brave Browser (Privacy & Research Browser with Native Adblocking)
+# ------------------------------------------------------------------------------
+echo "[Zisha OS] ===> Setting up Brave Browser..."
+curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg || true
+if [ -f /usr/share/keyrings/brave-browser-archive-keyring.gpg ]; then
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
+        > /etc/apt/sources.list.d/brave-browser-release.list
+    apt-get update && apt-get install -y --no-install-recommends brave-browser || true
+fi
 
 # ------------------------------------------------------------------------------
 # 1. Configure zram (Compressed RAM in memory for fast CPU AI & Multitasking)
