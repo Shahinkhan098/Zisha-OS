@@ -155,8 +155,8 @@
         <h1>⚡ Zisha OS 1.0 — মাস্টার কন্ট্রোল সেন্টার</h1>
         <p>ওয়েব ও সফটওয়্যার ডেভেলপমেন্ট • CPU-Optimized AI ইঞ্জিনিয়ারিং • সাইবার সিকিউরিটি • বাংলা ও ইংরেজি অফিস</p>
         <div class="hw-badges">
-          <span class="badge green">Detected CPU: 13th Gen Intel Core i3-1315U (6C / 8T)</span>
-          <span class="badge">RAM: 8 GB (zram 50% Boost Ready)</span>
+          <span class="badge green" id="cpuBadge">CPU Threads: Auto-Detected</span>
+          <span class="badge">Memory Booster: zram 50% Ready</span>
           <span class="badge">AI Mode: CPU AVX2 + Cloud API</span>
           <span class="badge green">Firewall & Secret Scanner: Active</span>
         </div>
@@ -296,10 +296,10 @@ ollama run qwen2.5-coder:1.5b</pre>
       const code = document.getElementById('secInput').value;
       const resBox = document.getElementById('secResult');
       const rules = [
-        { name: "OpenAI / Standard Secret Key (sk-...)", regex: /sk-[a-zA-Z0-9]{20,}/g },
+        { name: "OpenAI / Standard Secret Key (sk-...)", regex: /sk-[a-zA-Z0-9_\-]{20,}/g },
         { name: "Anthropic Claude API Key (sk-ant-...)", regex: /sk-ant-[a-zA-Z0-9\-_]{20,}/g },
         { name: "Google Gemini / Cloud API Key (AIzaSy...)", regex: /AIzaSy[a-zA-Z0-9\-_]{33}/g },
-        { name: "GitHub Personal Access Token (ghp_...)", regex: /ghp_[a-zA-Z0-9]{36}/g },
+        { name: "GitHub Token (ghp_/gho_/github_pat_...)", regex: /(?:gh[pous]_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{22,})/g },
         { name: "AWS Access Key ID (AKIA...)", regex: /AKIA[0-9A-Z]{16}/g },
         { name: "Private SSH/RSA Key", regex: /-----BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY-----/g }
       ];
@@ -319,6 +319,14 @@ ollama run qwen2.5-coder:1.5b</pre>
         resBox.innerHTML = "<strong>🚨 সতর্কবার্তা! নিচের গোপন কী-গুলো আপনার কোডে পাওয়া গেছে (এগুলো .env ফাইলে সরিয়ে ফেলুন):</strong><br/>" + findings.join("<br/>");
       }
     }
+
+    (function initHwBadge() {
+      const threads = navigator.hardwareConcurrency || "Multi-Core";
+      const badge = document.getElementById("cpuBadge");
+      if (badge) {
+        badge.innerText = "Detected CPU Threads: " + threads + " (CPU-Optimized AI)";
+      }
+    })();
   </script>
 </body>
 </html>

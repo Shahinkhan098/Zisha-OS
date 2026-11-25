@@ -23,11 +23,11 @@ echo "   Target ISO Output : ${OUTPUT_DIR}/${ISO_FILENAME}"
 echo "======================================================================"
 
 # 1. Initialize Debian 12 (Bookworm) Live-Build Configuration
+# Calamares is used as the graphical live installer, so omit duplicate d-i bloat
 lb config noauto \
     --architectures amd64 \
     --distribution bookworm \
-    --debian-installer live \
-    --debian-installer-gui true \
+    --debian-installer false \
     --archive-areas "main contrib non-free non-free-firmware" \
     --backports true \
     --bootappend-live "boot=live components quiet splash hostname=zisha-os username=zisha locales=en_US.UTF-8,bn_BD.UTF-8 keyboard-layouts=us pci=noaer" \
@@ -38,15 +38,15 @@ lb config noauto \
     --security true \
     --updates true
 
-# 2. Configure Debian Backports Archive & APT Pinning for Kernel 6.6+ and RTL8852BE Wi-Fi
+# 2. Configure Debian Backports Archive & APT Pinning for Kernel 6.6+ and Wi-Fi Firmware
 mkdir -p config/archives
 cat > config/archives/backports.list.chroot << 'EOF'
 deb http://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
 EOF
 
 cat > config/archives/backports.pref.chroot << 'EOF'
-Package: linux-image-amd64 linux-headers-amd64 firmware-realtek firmware-misc-nonfree firmware-iwlwifi
-Pin: release a=bookworm-backports
+Package: linux-image-amd64 linux-headers-amd64 firmware-linux-nonfree firmware-realtek firmware-misc-nonfree firmware-iwlwifi firmware-atheros firmware-brcm80211
+Pin: release a=oldstable-backports
 Pin-Priority: 990
 EOF
 
@@ -80,13 +80,15 @@ iw
 rfkill
 linux-image-amd64
 linux-headers-amd64
-firmware-linux
+firmware-linux-free
 firmware-linux-nonfree
 firmware-misc-nonfree
 firmware-iwlwifi
 firmware-realtek
 firmware-atheros
 firmware-brcm80211
+intel-microcode
+amd64-microcode
 cryptsetup
 lvm2
 EOF

@@ -29,9 +29,6 @@ apt-get install -y --no-install-recommends \
     im-config \
     locales
 
-# Try installing openbangla-keyboard if available in repo
-apt-get install -y --no-install-recommends openbangla-keyboard || true
-
 # Generate English (US) and Bengali (BD) UTF-8 Locales
 sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen || true
 sed -i 's/# bn_BD UTF-8/bn_BD UTF-8/' /etc/locale.gen || true
@@ -67,7 +64,7 @@ apt-get install -y --no-install-recommends \
     curl \
     unzip
 
-# Download Popular Bangladeshi Official Fonts (Kalpurush, Siyam Rupali, SolaimanLipi, Nikosh)
+# Download Popular Bangladeshi Official Fonts (Hind Siliguri + Noto Sans/Serif Bengali)
 BANG_FONT_DIR="/usr/share/fonts/truetype/zisha-bangla"
 mkdir -p "$BANG_FONT_DIR"
 
@@ -77,13 +74,16 @@ download_font_safe() {
     curl -fsSL --retry 2 --connect-timeout 10 "$url" -o "$dest" || echo "[Note] Offline/Skipped external font: $dest (fallback fonts active)"
 }
 
-# Fetch open Bangladeshi Unicode fonts from reliable mirrors if internet is active during ISO build
+# Fetch Hind Siliguri; static Noto Sans/Serif Bengali come cleanly from fonts-noto-core
 download_font_safe "https://github.com/google/fonts/raw/main/ofl/hindsiliguri/HindSiliguri-Regular.ttf" "$BANG_FONT_DIR/HindSiliguri-Regular.ttf"
 download_font_safe "https://github.com/google/fonts/raw/main/ofl/hindsiliguri/HindSiliguri-Bold.ttf" "$BANG_FONT_DIR/HindSiliguri-Bold.ttf"
-download_font_safe "https://github.com/google/fonts/raw/main/ofl/notosansbengali/NotoSansBengali%5Bwdth%2Cwght%5D.ttf" "$BANG_FONT_DIR/NotoSansBengali.ttf"
-download_font_safe "https://github.com/google/fonts/raw/main/ofl/notoserifbengali/NotoSerifBengali%5Bwdth%2Cwght%5D.ttf" "$BANG_FONT_DIR/NotoSerifBengali.ttf"
 
-# Configure Fontconfig so Nikosh / SolaimanLipi / Kalpurush / Calibri / Times New Roman always render cleanly
+# Install local bundled Bangladeshi fonts if present in the repo/host
+if [ -d "/opt/zisha-fonts" ]; then
+    cp -n /opt/zisha-fonts/*.ttf "$BANG_FONT_DIR/" 2>/dev/null || true
+fi
+
+# Configure Fontconfig so Bengali (Noto Sans Bengali / Hind Siliguri) takes priority over Lohit Bengali
 cat > /etc/fonts/local.conf << 'EOF'
 <?xml version="1.0"?>
 <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
@@ -96,23 +96,40 @@ cat > /etc/fonts/local.conf << 'EOF'
     <edit name="rgba" mode="assign"><const>rgb</const></edit>
   </match>
 
-  <!-- Map Calibri & Cambria to Carlito & Caladea metric-compatible fonts if needed -->
+  <!-- Map Calibri & Cambria to Carlito & Caladea with Bengali fallback -->
   <alias>
     <family>Calibri</family>
-    <prefer><family>Calibri</family><family>Carlito</family></prefer>
+    <prefer><family>Calibri</family><family>Carlito</family><family>Noto Sans Bengali</family></prefer>
   </alias>
   <alias>
     <family>Cambria</family>
-    <prefer><family>Cambria</family><family>Caladea</family></prefer>
+    <prefer><family>Cambria</family><family>Caladea</family><family>Noto Serif Bengali</family></prefer>
   </alias>
+
+  <!-- Prioritize Noto Sans Bengali & Hind Siliguri over thin Lohit/Mukti for Bengali -->
+  <match target="pattern">
+    <test name="lang" compare="contains"><string>bn</string></test>
+    <test qual="any" name="family"><string>sans-serif</string></test>
+    <edit name="family" mode="prepend" binding="strong">
+      <string>Noto Sans Bengali</string>
+      <string>Hind Siliguri</string>
+    </edit>
+  </match>
+  <match target="pattern">
+    <test name="lang" compare="contains"><string>bn</string></test>
+    <test qual="any" name="family"><string>serif</string></test>
+    <edit name="family" mode="prepend" binding="strong">
+      <string>Noto Serif Bengali</string>
+    </edit>
+  </match>
 
   <!-- Ensure Bengali fallback works across all applications -->
   <alias>
     <family>sans-serif</family>
     <prefer>
       <family>Noto Sans</family>
-      <family>Hind Siliguri</family>
       <family>Noto Sans Bengali</family>
+      <family>Hind Siliguri</family>
       <family>Lohit Bengali</family>
     </prefer>
   </alias>
@@ -159,7 +176,7 @@ apt-get install -y --no-install-recommends \
 # ------------------------------------------------------------------------------
 echo "[Zisha OS] ===> Setting up OnlyOffice Desktop Editors repository..."
 mkdir -p -m 700 /root/.gnupg
-curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor -o /usr/share/keyrings/onlyoffice.gpg || true
+curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | gpg --dearmor --yes -o /usr/share/keyrings/onlyoffice.gpg || true
 if [ -f /usr/share/keyrings/onlyoffice.gpg ]; then
     echo "deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main" \
         > /etc/apt/sources.list.d/onlyoffice.list

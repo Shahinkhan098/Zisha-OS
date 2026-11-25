@@ -47,9 +47,19 @@ read -r -p "Do you want to download these lightweight CPU AI models now? [Y/n]: 
 PULL_CONFIRM=${PULL_CONFIRM:-Y}
 
 if [[ "$PULL_CONFIRM" =~ ^[Yy]$ ]]; then
-    ollama pull "$RECOMMENDED_CODER"
-    ollama pull "$RECOMMENDED_CHAT"
-    ollama pull "nomic-embed-text"
+    if ! curl -fsS http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
+        echo -e "${CYAN}[*] Starting local Ollama service...${NC}"
+        nohup ollama serve >/tmp/zisha-ollama.log 2>&1 &
+        for _ in $(seq 1 10); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
+                break
+            fi
+            sleep 1
+        done
+    fi
+    ollama pull "$RECOMMENDED_CODER" || echo -e "${YELLOW}[!] Could not pull ${RECOMMENDED_CODER} (check network or ollama serve).${NC}"
+    ollama pull "$RECOMMENDED_CHAT" || echo -e "${YELLOW}[!] Could not pull ${RECOMMENDED_CHAT}.${NC}"
+    ollama pull "nomic-embed-text" || echo -e "${YELLOW}[!] Could not pull nomic-embed-text.${NC}"
 fi
 
 # 3. Setup Python AI Virtual Environment with CPU-Only PyTorch

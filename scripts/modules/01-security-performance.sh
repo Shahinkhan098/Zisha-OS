@@ -69,6 +69,9 @@ EOF
 # 3. Configure UFW Firewall (Zero-Trust Incoming + Localhost-Isolated Dev Ports)
 # ------------------------------------------------------------------------------
 echo "[Zisha OS] ===> Configuring UFW Firewall rules..."
+cat > /usr/local/sbin/zisha-apply-firewall << 'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
 ufw --force reset
 ufw default deny incoming
 ufw default allow outgoing
@@ -79,6 +82,33 @@ for PORT in 3000 5173 8000 8080 8888 11434 5432 6379; do
     ufw allow in on lo to 127.0.0.1 port "$PORT" proto tcp comment "Zisha OS Local Dev/AI Port $PORT"
     ufw deny in on any to any port "$PORT" proto tcp comment "Block external access to Dev/AI Port $PORT"
 done
+
+ufw --force enable
+EOF
+chmod +x /usr/local/sbin/zisha-apply-firewall
+
+# Apply immediately when kernel netfilter is available (live host), otherwise schedule first-boot setup
+if /usr/local/sbin/zisha-apply-firewall 2>/dev/null; then
+    echo "[Zisha OS] UFW Firewall rules applied immediately."
+else
+    echo "[Note] Inside container/chroot build; UFW rules will apply automatically on first boot."
+    sed -i 's/ENABLED=no/ENABLED=yes/' /etc/ufw/ufw.conf || true
+    mkdir -p /etc/systemd/system/multi-user.target.wants
+    cat > /etc/systemd/system/zisha-firewall-init.service << 'EOF'
+[Unit]
+Description=Zisha OS First-Boot UFW Firewall Initialization
+After=ufw.service network-pre.target
+ConditionPathExists=!/etc/zisha-os/.firewall-initialized
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '/usr/local/sbin/zisha-apply-firewall && mkdir -p /etc/zisha-os && touch /etc/zisha-os/.firewall-initialized'
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    ln -sf /etc/systemd/system/zisha-firewall-init.service /etc/systemd/system/multi-user.target.wants/zisha-firewall-init.service
+fi
 
 # Enable UFW on boot
 sed -i 's/ENABLED=no/ENABLED=yes/' /etc/ufw/ufw.conf || true
@@ -95,10 +125,11 @@ cat > /etc/zisha-os/git-hooks/pre-commit << 'EOF'
 set -e
 
 FORBIDDEN_PATTERNS=(
-    "sk-[a-zA-Z0-9]{20,}"                   # OpenAI / Anthropic API keys
+    "sk-[a-zA-Z0-9_\-]{20,}"                # OpenAI (incl. sk-proj-...) / Anthropic API keys
     "sk-ant-[a-zA-Z0-9\-_]{20,}"            # Anthropic Claude keys
     "AIzaSy[a-zA-Z0-9\-_]{33}"              # Google Gemini / Cloud API keys
-    "ghp_[a-zA-Z0-9]{36}"                   # GitHub Personal Access Tokens
+    "gh[pous]_[a-zA-Z0-9]{36}"              # GitHub Classic Tokens
+    "github_pat_[a-zA-Z0-9_]{22,}"          # GitHub Fine-Grained Tokens
     "AKIA[0-9A-Z]{16}"                      # AWS Access Key ID
     "-----BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY-----"
 )

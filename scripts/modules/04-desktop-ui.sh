@@ -22,10 +22,23 @@ apt-get install -y --no-install-recommends \
     network-manager-gnome \
     pavucontrol \
     pulseaudio \
+    alsa-utils \
+    blueman \
     papirus-icon-theme \
     arc-theme \
     thunar \
     thunar-archive-plugin \
+    thunar-volman \
+    tumbler \
+    tumbler-plugins-extra \
+    ffmpegthumbnailer \
+    gvfs \
+    gvfs-backends \
+    gvfs-fuse \
+    udisks2 \
+    ntfs-3g \
+    exfatprogs \
+    policykit-1-gnome \
     file-roller \
     firefox-esr \
     calamares \
@@ -36,7 +49,7 @@ apt-get install -y --no-install-recommends \
 # ------------------------------------------------------------------------------
 echo "[Zisha OS] ===> Installing Google Chrome Stable as Default Browser..."
 curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
-    | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg || true
+    | gpg --dearmor --yes -o /usr/share/keyrings/google-chrome.gpg || true
 
 if [ -f /usr/share/keyrings/google-chrome.gpg ]; then
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
@@ -90,11 +103,25 @@ Version=1.0
 Type=Application
 Name=Zisha AI Studio Setup (CPU AI)
 Comment=Setup and manage CPU-optimized Local LLMs (Ollama) and Python AI Workspace
-Exec=xfce4-terminal -e "/usr/local/bin/zisha-ai-setup"
+Exec=xfce4-terminal --hold -e "/usr/local/bin/zisha-ai-setup"
 Icon=utilities-terminal
 Terminal=false
 Categories=Development;Science;ArtificialIntelligence;
 Keywords=AI;LLM;Ollama;PyTorch;Zisha;
+EOF
+
+# Launcher 3: Zisha OS Master Control Center
+cat > /usr/share/applications/zisha-control-center.desktop << 'EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zisha OS Control Center
+Comment=Open Zisha OS Master Control Center (ISO Guide, AI Studio, Security Scanner, Office Hub)
+Exec=/usr/local/bin/zisha-control-center
+Icon=preferences-system
+Terminal=false
+Categories=System;Settings;Utility;
+Keywords=Zisha;Control Center;AI;Security;Office;
 EOF
 
 # Launcher 3: Zisha Security Audit
@@ -126,9 +153,14 @@ Keywords=Antigravity;AGY;Google;AI;IDE;Zisha;
 EOF
 
 cp /usr/share/applications/zisha-bangla-converter.desktop /etc/skel/Desktop/
+cp /usr/share/applications/zisha-control-center.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-ai-setup.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-security-audit.desktop /etc/skel/Desktop/
 cp /usr/share/applications/zisha-install-antigravity.desktop /etc/skel/Desktop/
+if [ -f /usr/share/applications/install-debian.desktop ]; then
+    cp /usr/share/applications/install-debian.desktop /etc/skel/Desktop/install-zisha-os.desktop
+    sed -i 's/^Name=.*/Name=Install Zisha OS/' /etc/skel/Desktop/install-zisha-os.desktop || true
+fi
 if [ -f /usr/share/applications/google-chrome.desktop ]; then
     cp /usr/share/applications/google-chrome.desktop /etc/skel/Desktop/
 fi

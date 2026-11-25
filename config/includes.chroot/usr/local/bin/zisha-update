@@ -57,8 +57,29 @@ fi
 # Brave Browser (Privacy & Research Browser)
 if ! command -v brave-browser >/dev/null 2>&1; then
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg || true
-    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
-    apt-get update && apt-get install -y brave-browser || true
+    if [ -f /usr/share/keyrings/brave-browser-archive-keyring.gpg ]; then
+        echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" > /etc/apt/sources.list.d/brave-browser-release.list
+        apt-get update && apt-get install -y brave-browser || true
+    fi
+fi
+
+# Bruno (Offline API Client)
+if ! command -v bruno >/dev/null 2>&1; then
+    mkdir -p /etc/apt/keyrings
+    gpg --no-default-keyring --keyring /etc/apt/keyrings/bruno.gpg --keyserver keyserver.ubuntu.com --recv-keys 9FA6017ECABE0266 2>/dev/null || true
+    if [ -f /etc/apt/keyrings/bruno.gpg ]; then
+        echo "deb [signed-by=/etc/apt/keyrings/bruno.gpg] http://debian.usebruno.com/ bruno stable" > /etc/apt/sources.list.d/bruno.list
+        apt-get update && apt-get install -y bruno || true
+    fi
+fi
+
+# Beekeeper Studio (SQL GUI)
+if ! command -v beekeeper-studio >/dev/null 2>&1; then
+    curl -fsSL https://deb.beekeeperstudio.io/beekeeper.key | gpg --dearmor --yes -o /usr/share/keyrings/beekeeper.gpg || true
+    if [ -f /usr/share/keyrings/beekeeper.gpg ]; then
+        echo "deb [signed-by=/usr/share/keyrings/beekeeper.gpg] https://deb.beekeeperstudio.io stable main" > /etc/apt/sources.list.d/beekeeper-studio-app.list
+        apt-get update && apt-get install -y beekeeper-studio || true
+    fi
 fi
 
 echo -e "${CYAN}[3/5] Fetching Latest Zisha OS Features from GitHub (${REPO_URL})...${NC}"
@@ -75,9 +96,14 @@ chmod +x /usr/local/bin/zisha-*
 sysctl --system >/dev/null 2>&1 || true
 
 echo -e "${CYAN}[5/5] Checking Realtek RTL8852BE Wi-Fi Driver status...${NC}"
-modprobe -r rtw89_8852be rtw89_8852ce 2>/dev/null || true
-modprobe rtw89_8852be 2>/dev/null || true
-systemctl restart NetworkManager 2>/dev/null || true
+if [ "${1:-}" = "--fix-wifi" ] || (lspci -nn 2>/dev/null | grep -qi "8852" && ! lsmod | grep -q "rtw89_8852be"); then
+    echo -e "${YELLOW}[*] Reloading Realtek rtw89 driver and NetworkManager...${NC}"
+    modprobe -r rtw89_8852be rtw89_8852ce 2>/dev/null || true
+    modprobe rtw89_8852be 2>/dev/null || true
+    systemctl restart NetworkManager 2>/dev/null || true
+else
+    echo -e "${GREEN}[OK] Active network left untouched (run 'sudo zisha-update --fix-wifi' to force Wi-Fi reload).${NC}"
+fi
 
 echo ""
 echo -e "${GREEN}======================================================================${NC}"

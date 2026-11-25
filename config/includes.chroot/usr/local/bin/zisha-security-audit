@@ -25,16 +25,28 @@ else
     echo -e " [!]  ${YELLOW}Kernel Memory Hardening                       : PARTIAL (Run 'sudo sysctl --system')${NC}"
 fi
 
-# 2. Check UFW Firewall
+# 2. Check UFW Firewall (actual active state)
 if command -v ufw >/dev/null 2>&1; then
-    echo -e " [OK] ${GREEN}UFW Firewall Installed                        : YES (Dev ports isolated to 127.0.0.1)${NC}"
+    if [ "$(id -u)" -eq 0 ]; then
+        if ufw status 2>/dev/null | grep -qi "Status: active"; then
+            echo -e " [OK] ${GREEN}UFW Firewall Status                           : ACTIVE (Dev ports isolated to 127.0.0.1)${NC}"
+        else
+            echo -e " [X]  ${RED}UFW Firewall Status                           : INACTIVE (Run 'sudo ufw enable')${NC}"
+        fi
+    elif grep -q "^ENABLED=yes" /etc/ufw/ufw.conf 2>/dev/null; then
+        echo -e " [OK] ${GREEN}UFW Firewall Config                           : ENABLED (Run with sudo to verify live rules)${NC}"
+    else
+        echo -e " [X]  ${RED}UFW Firewall Config                           : DISABLED (Run 'sudo ufw enable')${NC}"
+    fi
 else
     echo -e " [X]  ${RED}UFW Firewall Installed                        : NO${NC}"
 fi
 
-# 3. Check AppArmor Mandatory Access Control
-if command -v aa-status >/dev/null 2>&1; then
-    echo -e " [OK] ${GREEN}AppArmor Sandboxing                           : INSTALLED${NC}"
+# 3. Check AppArmor Mandatory Access Control (actual kernel state)
+if [ -r /sys/module/apparmor/parameters/enabled ] && [ "$(cat /sys/module/apparmor/parameters/enabled)" = "Y" ]; then
+    echo -e " [OK] ${GREEN}AppArmor Sandboxing                           : ACTIVE${NC}"
+elif command -v aa-status >/dev/null 2>&1; then
+    echo -e " [!]  ${YELLOW}AppArmor Sandboxing                           : INSTALLED (Check kernel boot params)${NC}"
 else
     echo -e " [!]  ${YELLOW}AppArmor Sandboxing                           : NOT DETECTED${NC}"
 fi

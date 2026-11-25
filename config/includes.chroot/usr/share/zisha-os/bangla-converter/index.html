@@ -261,8 +261,8 @@
       ["ক্ষ", "¶"], ["জ্ঞ", "Á"], ["ঙ্ক", "¼"], ["ঙ্গ", "½"],
       ["ক্ত", "³"], ["ক্ক", "°"], ["ক্ট", "±"], ["ক্র", "µ"], ["ক্ল", "¬"],
       ["ন্ত", "šÍ"], ["ন্দ", "›`"], ["ন্ধ", "Ü"], ["ন্ন", "bœ"], ["ন্ব", "š^"],
-      ["ম্প", "¤ú"], ["ম্ফ", "¤¢"], ["ম্ব", "¤^"], ["ম্ভ", "¤§"], ["ম্ম", "¤§"],
-      ["স্ত", "¯Í"], ["স্থ", "¯’"], ["স্প", "¯ú"], ["স্ফ", "¯¢"], ["স্র", "¯্র"],
+      ["ম্প", "¤ú"], ["ম্ফ", "¤£"], ["ম্ব", "¤^"], ["ম্ভ", "¤¢"], ["ম্ম", "¤§"],
+      ["স্ত", "¯Í"], ["স্থ", "¯’"], ["স্প", "¯ú"], ["স্ফ", "¯¢"], ["স্র", "¯ª"],
       ["ষ্ট", "ó"], ["ষ্ঠ", "ô"], ["ষ্ণ", "ò"], ["শ্চ", "ð"], ["শ্ন", "kœ"],
       ["ত্ত", "Ë"], ["ত্থ", "Ì"], ["ত্র", "Î"], ["দ্দ", "Ï"], ["দ্ধ", "×"], ["দ্ব", "Ø"],
       ["প্ত", "ß"], ["প্ন", "cœ"], ["প্প", "à"], ["প্র", "cÖ"], ["প্ল", "cø"],
@@ -289,12 +289,12 @@
 
     function convertUnicodeToBijoy() {
       let text = document.getElementById("unicodeBox").value;
-      // Split two-part vowels: ো -> ে + া and ৌ -> ে + ৌ
+      // Split two-part vowels: ো -> ে + া and ৌ -> ে + ৗ
       text = text.replace(/ো/g, "ো").replace(/ৌ/g, "ৌ");
+      // Handle Ref (র্) before moving pre-base vowels so words like সূর্যোদয় or নির্দেশ stay intact
+      text = text.replace(/র্([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[িীুূৃেৈাৗ]*)/g, "$1©");
       // Move pre-base vowels (ি, ে, ৈ) before the consonant/cluster
       text = text.replace(/([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)([িেৈ])/g, "$2$1");
-      // Handle Ref (র্) moving to the end of the consonant cluster + kar
-      text = text.replace(/র্([িেৈ]?[ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[াীুূৃ]?)/g, "$1©");
 
       for (const [uni, bij] of uniToBijoyMap) {
         text = text.split(uni).join(bij);
@@ -314,12 +314,12 @@
         text = text.split(bij).join(uni);
       }
 
-      // Restore Ref (© -> র্)
-      text = text.replace(/([িেৈ]?[ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[াীুূৃ]?)©/g, "র্$1");
       // Move pre-base vowels (ি, ে, ৈ) back after the consonant/cluster
       text = text.replace(/([িেৈ])([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*)/g, "$2$1");
       // Merge ে + া -> ো and ে + ৗ -> ৌ
       text = text.replace(/ো/g, "ো").replace(/ৌ/g, "ৌ");
+      // Restore Ref (© -> র্) before the consonant cluster + vowel signs
+      text = text.replace(/([ক-হড়ঢ়য়](?:্[ক-হড়ঢ়য়])*[িীুূৃেৈোৌা]*)©/g, "র্$1");
 
       document.getElementById("unicodeBox").value = text;
       updateStats();

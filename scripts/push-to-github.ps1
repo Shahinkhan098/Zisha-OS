@@ -1,3 +1,7 @@
+param(
+    [string]$CommitMessage = "chore: update Zisha OS configuration and bug fixes"
+)
+
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $ProjectRoot
@@ -54,9 +58,24 @@ public class CredHelper {
 Add-Type -TypeDefinition $code
 
 $Token = [CredHelper]::GetToken("git:https://github.com")
+if (-not $Token) {
+    Write-Error "Could not find GitHub credential in Windows Credential Manager."
+    exit 1
+}
+
 git add -A
-git commit -m "feat: add Google Chrome as default browser and include Wi-Fi firmware"
-git remote set-url origin "https://Shahinkhan098:$Token@github.com/Shahinkhan098/Zisha-OS.git"
-git push origin main
-git remote set-url origin "https://github.com/Shahinkhan098/Zisha-OS.git"
-Write-Host "[SUCCESS] Pushed Google Chrome & Wi-Fi updates to https://github.com/Shahinkhan098/Zisha-OS" -ForegroundColor Green
+$Pending = git status --porcelain
+if ($Pending) {
+    git commit -m $CommitMessage
+} else {
+    Write-Host "[i] No new changes to commit." -ForegroundColor Yellow
+}
+
+try {
+    git remote set-url origin "https://Shahinkhan098:$Token@github.com/Shahinkhan098/Zisha-OS.git"
+    git push origin main
+    Write-Host "[SUCCESS] Pushed updates to https://github.com/Shahinkhan098/Zisha-OS" -ForegroundColor Green
+} finally {
+    # Always scrub token from .git/config even if push fails
+    git remote set-url origin "https://github.com/Shahinkhan098/Zisha-OS.git"
+}

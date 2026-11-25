@@ -105,7 +105,7 @@ fi
 # ------------------------------------------------------------------------------
 echo "[Zisha OS] ===> Setting up VSCodium Code Editor repository..."
 curl -fsSL https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg \
-    | gpg --dearmor -o /usr/share/keyrings/vscodium-archive-keyring.gpg || true
+    | gpg --dearmor --yes -o /usr/share/keyrings/vscodium-archive-keyring.gpg || true
 
 if [ -f /usr/share/keyrings/vscodium-archive-keyring.gpg ]; then
     echo 'deb [ signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg ] https://download.vscodium.com/debs vscodium main' \
@@ -192,6 +192,7 @@ EOF
 cat > /etc/profile.d/zisha-ai-cpu-env.sh << 'EOF'
 # Zisha OS — CPU AI Optimization Variables
 export OLLAMA_HOST="127.0.0.1:11434"
+export OLLAMA_ORIGINS="file://*,http://127.0.0.1:*,http://localhost:*"
 export OLLAMA_NUM_PARALLEL=1
 export OLLAMA_MAX_LOADED_MODELS=1
 export OMP_NUM_THREADS=4
@@ -199,5 +200,20 @@ export MKL_NUM_THREADS=4
 export PIP_NO_CACHE_DIR=off
 EOF
 chmod +x /etc/profile.d/zisha-ai-cpu-env.sh
+
+# Ensure Ollama systemd service also allows Control Center (file://) local requests
+mkdir -p /etc/systemd/system/ollama.service.d
+cat > /etc/systemd/system/ollama.service.d/zisha-override.conf << 'EOF'
+[Service]
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+Environment="OLLAMA_ORIGINS=*"
+Environment="OLLAMA_NUM_PARALLEL=1"
+Environment="OLLAMA_MAX_LOADED_MODELS=1"
+EOF
+
+# Add active non-root user (if run via sudo) to docker group
+if [ -n "${SUDO_USER:-}" ] && id "$SUDO_USER" >/dev/null 2>&1; then
+    usermod -aG docker "$SUDO_USER" || true
+fi
 
 echo "[Zisha OS] ===> Module 03 (Web Dev & CPU AI Stack) Completed Successfully."
